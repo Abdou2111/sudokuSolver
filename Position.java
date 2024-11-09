@@ -1,4 +1,3 @@
-import java.lang.IllegalStateException;
 
 /**
  * Position is an interface for the Position ADT

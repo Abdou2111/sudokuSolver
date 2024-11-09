@@ -1,6 +1,4 @@
 import java.util.Iterator;
-import java.lang.Iterable;
-import java.lang.IllegalArgumentException;
 
 /**
  * Tree is an interface for the ADT Tree
@@ -23,6 +21,9 @@ public interface Tree<E> extends Iterable<E> {
     boolean isRoot( Position<E> p ) throws IllegalArgumentException;
     int size();
     boolean isEmpty();
+
+    @Override
     Iterator<E> iterator();
+    
     Iterable<Position<E>> positions();
 }
