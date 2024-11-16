@@ -34,4 +34,8 @@ public class PositionCell<E> implements Position<E> {
     public String toString() {
         return "Row: " + row + " Col: " + col + " Value: " + value;
     }
+
+    public Position<E> getParent(Position<E> p) {
+        return ;
+    }
 }

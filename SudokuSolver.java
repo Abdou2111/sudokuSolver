@@ -20,13 +20,6 @@ public class SudokuSolver implements GameSolver {
         System.out.println( solution );
     }
 
-    //________________________________________________________________________________________________________
-    // mandatory GameSolver interface methods
-    @Override
-    public boolean solve(){
-        return true;
-    }
-
     public boolean isValidPlacement( int row, int col, Integer value ){
         int dimensionSousCarre = (int) sqrt(board.getWidth());
         for( int x = 0; x < board.getWidth(); x++ ){
@@ -53,34 +46,18 @@ public class SudokuSolver implements GameSolver {
         return true;
         
     }
-    
-/*
-    // validate an insertion in the board
-    public boolean isValidPlacement( int row, int col, Integer value ){
-        // check row
-        for( int x = 0; x < board.getWidth(); x++ ){
-            if( board.getCell( x, col ) == value ){
-                return false;
-            }
-        }
-        // check column
-        for( int y = 0; y < board.getHeight(); y++ ){
-            if( board.getCell( row, y ) == value ){
-                return false;
-            }
-        }
-        // check 3x3 square
-        int x0 = (row / 3) * 3;
-        int y0 = (col / 3) * 3;
-        for( int x = 0; x < 3; x++ ){
-            for( int y = 0; y < 3; y++ ){
-                if( board.getCell( x0 + x, y0 + y ) == value ){
-                    return false;
-                }
-            }
-        }
+
+    //________________________________________________________________________________________________________
+    // mandatory GameSolver interface methods
+    @Override
+    public boolean solve(){
+
+        solution.display();
         return true;
-    }*/
+    }
+
+    
+    
 
     // actual solver
     /*private boolean solveBoard(){
