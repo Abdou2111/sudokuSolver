@@ -1,27 +1,60 @@
+
+import static java.lang.Math.sqrt;
+import java.util.Objects;
+
 public class SudokuSolver implements GameSolver {
 
     // attributes
-    IntegerBoard board;
-    IntegerBoard solution;
-    Tree<IntegerBoard> tree;
+    IntegerBoard<Integer> board;
+    IntegerBoard<Integer> solution;
+    Tree<IntegerBoard<Integer>> tree;
 
     // constructor
     public SudokuSolver( GameBoard<Integer> board ){
-        this.board = (IntegerBoard) board;
-        this.solution = new IntegerBoard( new Integer[board.getWidth()][board.getHeight()] );
+        this.board = (IntegerBoard<Integer>) board;
+        this.solution = new IntegerBoard<Integer> ( new Integer[board.getWidth()][board.getHeight()] );
     }
 
+    // print the solution
+    public void printSolution(){
+        System.out.println( solution );
+    }
+
+    //________________________________________________________________________________________________________
     // mandatory GameSolver interface methods
     @Override
     public boolean solve(){
-        return solveBoard();
+        return true;
     }
 
-    @Override
-    public void printSolution(){
-        solution.display();
+    public boolean isValidPlacement( int row, int col, Integer value ){
+        int dimensionSousCarre = (int) sqrt(board.getWidth());
+        for( int x = 0; x < board.getWidth(); x++ ){
+            if( Objects.equals(board.getCell( x, col ), value) ){
+                return false;
+            }
+        }
+        // check column
+        for( int y = 0; y < board.getHeight(); y++ ){
+            if( Objects.equals(board.getCell( row, y ), value) ){
+                return false;
+            }
+        }
+        // check n x n square
+        int x0 = row / dimensionSousCarre ; 
+        int y0 = col / dimensionSousCarre ;
+        for( int x = 0; x < dimensionSousCarre; x++ ){
+            for( int y = 0; y < dimensionSousCarre; y++ ){
+                if( Objects.equals(board.getCell( x0 + x, y0 + y ), value) ){
+                    return false;
+                }
+            }
+        }
+        return true;
+        
     }
-
+    
+/*
     // validate an insertion in the board
     public boolean isValidPlacement( int row, int col, Integer value ){
         // check row
@@ -47,7 +80,7 @@ public class SudokuSolver implements GameSolver {
             }
         }
         return true;
-    }
+    }*/
 
     // actual solver
     /*private boolean solveBoard(){
@@ -70,4 +103,6 @@ public class SudokuSolver implements GameSolver {
         solution = board;
         return true;
     }*/
+
+    
 }

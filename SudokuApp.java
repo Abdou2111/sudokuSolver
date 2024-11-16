@@ -108,7 +108,7 @@ public class SudokuApp {
         test.testCase3();
         test.testCase4();
 	    test.testCase5();*/
-        GameBoard puzzle = new IntegerBoard( new Integer[][] {
+        GameBoard<Integer> puzzle = new IntegerBoard<Integer>( new Integer[][] {
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
             {6, 0, 0, 1, 9, 5, 0, 0, 0},
             {0, 9, 8, 0, 0, 0, 0, 6, 0},
@@ -120,5 +120,7 @@ public class SudokuApp {
             {0, 0, 0, 0, 8, 0, 0, 7, 9}
         } );
         puzzle.display();
+        SudokuSolver solver = new SudokuSolver( puzzle );
+        System.out.println(solver.isValidPlacement(0, 8, 2));
     }
 }

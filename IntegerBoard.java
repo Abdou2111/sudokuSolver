@@ -1,18 +1,20 @@
-public class IntegerBoard implements GameBoard {
-    private int[][] board;      // The two-dimensional sudoku board
-    private int width;          // The number of columns
-    private int height;         // The number of rows
+
+
+public class IntegerBoard<T> implements GameBoard<T> {
+    private Integer[][] board;      // The two-dimensional sudoku board
+    private final int WIDTH;          // The number of columns
+    private final int HEIGHT;         // The number of rows
 
     // Construct bord with width and height
     public IntegerBoard( Integer[][] puzzle ){
         // The height is just the length of the puzzle
-        this.height = puzzle.length;
+        this.HEIGHT = puzzle.length;
         // The width is just the lenght of one line
-        this.width = puzzle[0].length;
+        this.WIDTH = puzzle[0].length;
         // create bord 
-        board = new int[height][width];
-        for( int x = 0; x < width; x++ ){
-            for( int y = 0; y < height; y++ ){
+        board = new Integer[HEIGHT][WIDTH];
+        for( int x = 0; x < WIDTH; x++ ){
+            for( int y = 0; y < HEIGHT; y++ ){
                 board[x][y] = puzzle[y][x];
             }
         }
@@ -20,14 +22,15 @@ public class IntegerBoard implements GameBoard {
 
     // acces board's elements
     @Override
-    public Object getCell( int x, int y ) throws IndexOutOfBoundsException{
+    @SuppressWarnings("unchecked")
+    public T getCell( int x, int y ) throws IndexOutOfBoundsException{
         // return an exception if at least one index is not correct
-        if( x < 0 || x >= width || y < 0 || y >= height ){
+        if( x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ){
             throw new IndexOutOfBoundsException
             ( "getCell: position out of bounds" );
         }
         // return the element
-        return board[x][y];
+        return (T) board[x][y];
     }
     
     // Mosidy board's element
@@ -35,35 +38,55 @@ public class IntegerBoard implements GameBoard {
     public void setCell( int x, int y, Object value ) 
     throws IndexOutOfBoundsException{
         // return an exception if at least one index is not correct
-        if( x < 0 || x >= width || y < 0 || y >= height ){
+        if( x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ){
             throw new IndexOutOfBoundsException
             ( "setCell: position out of bounds" );
         }
         // Change the element by casting the new element as an Int
-        board[x][y] = (int) value;
+        board[x][y] = (Integer) value;
     }
 
     // Return number of columns
     @Override
     public int getWidth(){
-        return width;
+        return WIDTH;
     }
     
     // Return number of rows
     @Override
     public int getHeight(){
-        return height;
+        return HEIGHT;
     }
     
     // Display the  game bord
     @Override
     public void display(){
-        for( int y = 0; y < height; y++ ){
-            for( int x = 0; x < width; x++ ){
+        verifySize();
+        for( int y = 0; y < HEIGHT; y++ ){
+            for( int x = 0; x < WIDTH; x++ ){
                 System.out.print( board[x][y] + " " );
             }
             System.out.println();
         }
+    }
+
+    // Check puzzle size
+    private Boolean verifySize() 
+    throws IllegalArgumentException{
+        if ( HEIGHT == 0  || WIDTH == 0) {
+            throw new IllegalArgumentException("Puzzle is empty");
+        }
+        return perfectSquare(this.WIDTH);
+    }
+
+    // Check if the puzzle is a perfect square
+    private boolean perfectSquare(int n) 
+    throws IllegalArgumentException{
+        if( WIDTH != HEIGHT ){ 
+            throw new IllegalArgumentException("Not a square");
+        }
+        int racine = (int) Math.sqrt(n);
+        return racine * racine == n;
     }
     
 }
