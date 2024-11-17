@@ -1,212 +1,153 @@
-
-import java.util.Iterator;
-
-import org.w3c.dom.Node;
+import java.util.LinkedList;
+import java.util.Collections;
+import java.util.List;
 
 public class LinkedGeneralTree<E> extends AbstractTree<E> {
+    
+    // ------- inner Node class
+    protected static class Node<E> implements Position<E> {
+        private E element;
+        private Node<E> parent;
+        private List<Node<E>> children;
+        private Object container;
+
+        // construct a node with element and neighbors
+        public Node(E e, Node<E> parent, Object container) {
+            this.element = e;
+            this.parent = parent;
+            this.children = new LinkedList<>();
+            this.container = container;
+        }
+
+        // getters
+        public E getElement() { return this.element; } 
+        public Node<E> getParent() { return this.parent; }
+        public List<Node<E>> getChildren() { return this.children; }
+        public Object getContainer() { return this.container; }
+
+        // setters
+        public void setElement(E element) { this.element = element; }
+        public void setParent(Node<E> parent) { this.parent = parent; }
+        public void setContainer(Object container) { this.container = container; }
+        public String toString() { return this.element.toString(); }
+    
+    } // ----------- end of inner class Node
+
+    protected Node<E> createNode( E element, Node<E> parent) {
+        return new Node<E>(element, parent, this);
+    }
     protected Node<E> root = null;
     private int size = 0;
 
-    protected Node<E> createNode(E e, Node<E> parent, Node<E>[] children, Node<E> container) {
-        return new Node(e, parent, children, this);
-    }
+    public LinkedGeneralTree() {}
 
-    public LinkedGeneralTree() {
-    }
-
-    protected Node<E> validate(Position<E> p) throws IllegalArgumentException {
-        if (!(p instanceof Node<E> node)) {
+    protected Node<E> validate(Position<E> p) 
+    throws IllegalArgumentException {
+        if(!(p instanceof Node)) 
             throw new IllegalArgumentException("Invalid position type");
-        } else if (node.getContainer() != this) {
+        Node<E> node = (Node<E>)p;
+        if(node.getContainer() != (Object)this) 
             throw new IllegalArgumentException("Invalid position container");
-        } else if (node.getParent() == node) {
+        if(node.getParent() == node)
             throw new IllegalArgumentException("Position has been deleted");
-        } else {
-            return node;
-        }
+        return node;
     }
 
-    protected void setContainer(Position<E> p, Object container) throws IllegalArgumentException {
-        Node<E> node = (Node)p;
+    protected void setContainer(Position<E> p, Object container)
+    throws IllegalArgumentException {
+        Node<E> node = (Node<E>)p;
         node.setContainer(container);
     }
 
-    public int size() {
-        return this.size;
-    }
+    @Override
+    public Position<E> root() { return this.root; }
 
-    public Position<E> root() {
-        return this.root;
-    }
-
-    public Position<E> parent(Position<E> p) throws IllegalArgumentException {
+    @Override
+    public Position<E> parent(Position<E> p) 
+    throws IllegalArgumentException { 
         Node<E> node = this.validate(p);
         return node.getParent();
     }
 
-    public Position<E> left(Position<E> p) throws IllegalArgumentException {
-        Node<E> node = this.validate(p);
-        return node.getLeft();
+    @Override
+    public Iterable<Position<E>> children(Position<E> p) {
+        Node<E> node = validate(p);
+        return Collections.unmodifiableList(node.getChildren());
     }
 
-    public Position<E> right(Position<E> p) throws IllegalArgumentException {
-        Node<E> node = this.validate(p);
-        return node.getRight();
+    @Override
+    public int numChildren(Position<E> p) {
+        Node<E> node = validate(p);
+        return node.getChildren().size();
+    }
+
+    @Override
+    public int size() { return this.size; }
+    
+    public Position<E> addChild(Position<E> p, E e) throws IllegalArgumentException {
+        Node<E> parent = validate(p);
+        Node<E> child = createNode(e, parent);
+        parent.getChildren().add(child);
+        size++;
+        return child;
     }
 
     public Position<E> addRoot(E e) throws IllegalStateException {
-        if (!this.isEmpty()) {
-            throw new IllegalStateException("Tree is not empty");
-        } else {
-            this.root = this.createNode(e, (Node)null, (Node)null, (Node)null);
-            this.size = 1;
-            return this.root;
-        }
+        if (root != null) throw new IllegalStateException("Tree already has a root");
+        root = createNode(e, null);
+        size = 1;
+        return root;
     }
-
-    public Position<E> addLeft(Position<E> p, E e) throws IllegalArgumentException {
-        Node<E> parent = this.validate(p);
-        if (parent.getLeft() != null) {
-            throw new IllegalArgumentException("p already has a left child");
-        } else {
-            Node<E> child = this.createNode(e, parent, (Node)null, (Node)null);
-            parent.setLeft(child);
-            ++this.size;
-            return child;
-        }
-    }
-
-    public Position<E> addRight(Position<E> p, E e) throws IllegalArgumentException {
-        Node<E> parent = this.validate(p);
-        if (parent.getRight() != null) {
-            throw new IllegalArgumentException("p already has a right child");
-        } else {
-            Node<E> child = this.createNode(e, parent, (Node)null, (Node)null);
-            parent.setRight(child);
-            ++this.size;
-            return child;
-        }
-    }
-
-    public E set(Position<E> p, E e) throws IllegalArgumentException {
-        Node<E> node = this.validate(p);
-        E tmp = node.getElement();
-        node.setElement(e);
-        return tmp;
-    }
-
 
     public E remove(Position<E> p) throws IllegalArgumentException {
-        Node<E> node = this.validate(p);
-        if (this.numChildren(p) == 2) {
-            throw new IllegalArgumentException("p has two children");
+        Node<E> node = validate(p);
+        if (node.getParent() != null) {
+            node.getParent().getChildren().remove(node);
         } else {
-            Node<E> child = node.getLeft() != null ? node.getLeft() : node.getRight();
-            if (child != null) {
-                child.setParent(node.getParent());
+            root = null; // Removing the root
+        }
+        int subtreeSize = calculateSubtreeSize(node);
+        size -= subtreeSize;
+
+        // Invalidate the node
+        node.setParent(node);
+        node.setContainer(null);
+
+        return node.getElement();
+    }
+
+
+    private int calculateSubtreeSize(Node<E> node) {
+        int count = 1; // Count the node itself
+        for (Node<E> child : node.getChildren()) {
+            count += calculateSubtreeSize(child);
+        }
+        return count;
+    }
+//__________________________________________________________________________________
+    public void removeChild( Node parent, Node child ){
+        parent.getChildren().remove( child );
+        child.setParent( null );
+        size--;
+    }
+    public void removeNode( Node node ){
+        GeneralNode parent = node.getParent();
+        if( parent != null ){
+            parent.getChildren().remove( node );
+            node.setParent( null );
+            size--;
+        }
+    }
+    public void display(){
+        LinkedList<GeneralNode> queue = new LinkedList<GeneralNode>();
+        queue.add( root );
+        while( !queue.isEmpty() ){
+            GeneralNode node = queue.remove();
+            System.out.println( node.getElement() );
+            for( GeneralNode child : node.getChildren() ){
+                queue.add( child );
             }
-
-            if (node == this.root) {
-                this.root = child;
-            } else {
-                Node<E> parent = node.getParent();
-                if (node == parent.getLeft()) {
-                    parent.setLeft(child);
-                } else {
-                    parent.setRight(child);
-                }
-            }
-
-            --this.size;
-            E tmp = node.getElement();
-            node.setElement((E)null);
-            node.setLeft((Node)null);
-            node.setRight((Node)null);
-            node.setParent(node);
-            return tmp;
         }
     }
 
-    public void toExpression(Position<E> p) {
-        if (this.left(p) != null) {
-            System.out.print("(");
-            this.toExpression(this.left(p));
-        }
-
-        System.out.print(p.getElement());
-        if (this.right(p) != null) {
-            this.toExpression(this.right(p));
-            System.out.print(")");
-        }
-
-    }
-
-    public Iterable<Position<E>> children( Position<E> p ) throws IllegalArgumentException {
-        Node<E> node = this.validate(p);
-        Node<E>[] children = node.getChildren();
-        fo
-    }
-
-
-    protected static class Node<E> implements Position<E> {
-        private E element;
-        private Node<E> parent;
-        private PositionCell<E>[] children;
-        private Object container;
-
-        public Node(E e, Node<E> parent, PositionCell[] children, Object container) {
-            this.element = e;
-            this.parent = parent;
-            this.children = children;
-            this.container = container;
-        }
-
-        public E getElement() {
-            return this.element;
-        }
-
-        public Node<E> getParent() {
-            return this.parent;
-        }
-
-        public PositionCell[] getChildren() {
-            return this.children;
-        }
-
-        public Node<E> getLeft() {
-            return this.left;
-        }
-
-        public Node<E> getRight() {
-            return this.right;
-        }
-
-        public Object getContainer() {
-            return this.container;
-        }
-
-        public void setElement(E e) {
-            this.element = e;
-        }
-
-        public void setParent(Node<E> parent) {
-            this.parent = parent;
-        }
-
-        public void setLeft(Node<E> left) {
-            this.left = left;
-        }
-
-        public void setRight(Node<E> right) {
-            this.right = right;
-        }
-
-        public void setContainer(Object container) {
-            this.container = container;
-        }
-
-        public String toString() {
-            return this.element.toString();
-        }
-    }
 }
