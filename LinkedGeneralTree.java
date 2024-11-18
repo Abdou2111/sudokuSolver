@@ -11,9 +11,6 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         return new Node(e, parent, children, this);
     }
 
-    public LinkedGeneralTree() {
-    }
-
     protected Node<E> validate(Position<E> p) throws IllegalArgumentException {
         if (!(p instanceof Node<E> node)) {
             throw new IllegalArgumentException("Invalid position type");
@@ -27,7 +24,7 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
     }
 
     protected void setContainer(Position<E> p, Object container) throws IllegalArgumentException {
-        Node<E> node = (Node)p;
+        Node<E> node = (Node<E>)p;
         node.setContainer(container);
     }
 
@@ -208,5 +205,12 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         public String toString() {
             return this.element.toString();
         }
+    }
+
+
+    @Override
+    public int numChildren(Position<E> p) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'numChildren'");
     }
 }
