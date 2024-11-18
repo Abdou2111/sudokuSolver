@@ -7,7 +7,7 @@ public class SudokuSolver implements GameSolver {
     // attributes
     IntegerBoard<Integer> board;
     IntegerBoard<Integer> solution;
-    Tree<IntegerBoard<Integer>> tree;
+    LinkedGeneralTree<IntegerBoard<Integer>> tree;
 
     // constructor
     public SudokuSolver( GameBoard<Integer> board ){
