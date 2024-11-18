@@ -124,30 +124,32 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         }
         return count;
     }
-//__________________________________________________________________________________
-    public void removeChild( Node parent, Node child ){
-        parent.getChildren().remove( child );
-        child.setParent( null );
-        size--;
-    }
-    public void removeNode( Node node ){
-        GeneralNode parent = node.getParent();
-        if( parent != null ){
-            parent.getChildren().remove( node );
-            node.setParent( null );
-            size--;
+
+
+// ---------------------------------------------------------------------------
+
+    // Ajouter cette méthode à la classe LinkedGeneralTree
+    public String toExpression(Position<E> p) throws IllegalArgumentException {
+        Node<E> node = validate(p);
+        // Si le nœud est une feuille, retourner simplement son élément
+        if (isExternal(p)) {
+            return node.getElement().toString();
         }
-    }
-    public void display(){
-        LinkedList<GeneralNode> queue = new LinkedList<GeneralNode>();
-        queue.add( root );
-        while( !queue.isEmpty() ){
-            GeneralNode node = queue.remove();
-            System.out.println( node.getElement() );
-            for( GeneralNode child : node.getChildren() ){
-                queue.add( child );
+
+        // Si le nœud est interne, construire l'expression avec ses enfants
+        StringBuilder expression = new StringBuilder("("); // Début avec une parenthèse ouvrante
+        List<Node<E>> children = node.getChildren();       // Obtenir les enfants du nœud
+        for (int i = 0; i < children.size(); i++) {
+            if (i > 0) {
+                // Ajouter un opérateur (par défaut, espace ; modifier selon le contexte)
+                expression.append(" ").append(node.getElement().toString()).append(" ");
             }
+            // Appeler récursivement toExpression sur chaque enfant
+            expression.append(toExpression(children.get(i)));
         }
+        expression.append(")"); // Ajouter une parenthèse fermante
+        return expression.toString();
     }
+
 
 }

@@ -56,6 +56,31 @@ public class SudokuSolver implements GameSolver {
         return true;
     }
 
+    /**
+     * This method is using a tree to solve the sudoku puzzle.
+     * The root is initialized as the sudoku given at the start,
+     * and the array is traversed in width, checking which value can be added.
+     * Once the value has been found, we create a child (Node) of the root and replace 
+     * the 0 in the cell with the value found.
+     */
+    public void solveBoard() {
+        LinkedGeneralTree<IntegerBoard<Integer>> sudoku = new LinkedGeneralTree<>();
+        Position<IntegerBoard<Integer>> root = sudoku.addRoot(this.board);
+
+        for(int x = 0; x <board.getWidth(); x++) {
+            for(int y = 0; y < board.getHeight(); y++) {
+                if(board.getCell(x, y) == 0) {
+                    for(Integer value = 1; value <= board.getHeight() + 1; value++) {
+                        if(isValidPlacement(x, y, value)) {
+                            board.setCell(x, y, value);
+                            Position<IntegerBoard<Integer>> child = sudoku.addChild(root, board);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     
     
 
