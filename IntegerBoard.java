@@ -1,5 +1,3 @@
-
-
 public class IntegerBoard<T> implements GameBoard<T> {
     private Integer[][] board;      // The two-dimensional sudoku board
     private final int WIDTH;          // The number of columns

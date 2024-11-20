@@ -77,8 +77,9 @@ public class SudokuSolver implements GameSolver {
                     for(Integer value = 1; value <= board.getHeight() + 1; value++) {
                         if(isValidPlacement(x, y, value)) {
 
-                            IntegerBoard<Integer> newBoard = puzzle.getElement();
-                            // If the value is valid, we put it in the new Board
+                            IntegerBoard<Integer> newBoard =
+                                puzzle.getElement();
+                            // If the value is valid, put it in the new Board
                             newBoard.setCell(x, y, value);
                             // Create a node in the tree
                             Position<IntegerBoard<Integer>> child =

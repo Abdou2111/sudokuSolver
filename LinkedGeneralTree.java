@@ -84,7 +84,8 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
     @Override
     public int size() { return this.size; }
     
-    public Position<E> addChild(Position<E> p, E e) throws IllegalArgumentException {
+    public Position<E> addChild(Position<E> p, E e) 
+    throws IllegalArgumentException {
         Node<E> parent = validate(p);
         Node<E> child = createNode(e, parent);
         parent.getChildren().add(child);
@@ -92,14 +93,18 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         return child;
     }
 
-    public Position<E> addRoot(E e) throws IllegalStateException {
-        if (root != null) throw new IllegalStateException("Tree already has a root");
+    public Position<E> addRoot(E e) 
+    throws IllegalStateException {
+        if (root != null) {
+            throw new IllegalStateException("Tree already has a root");
+        }
         root = createNode(e, null);
         size = 1;
         return root;
     }
 
-    public E remove(Position<E> p) throws IllegalArgumentException {
+    public E remove(Position<E> p) 
+    throws IllegalArgumentException {
         Node<E> node = validate(p);
         if (node.getParent() != null) {
             node.getParent().getChildren().remove(node);
@@ -129,7 +134,8 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
 // ---------------------------------------------------------------------------
 
     // Ajouter cette méthode à la classe LinkedGeneralTree
-    public String toExpression(Position<E> p) throws IllegalArgumentException {
+    public String toExpression(Position<E> p) 
+    throws IllegalArgumentException {
         Node<E> node = validate(p);
         // Si le nœud est une feuille, retourner simplement son élément
         if (isExternal(p)) {
