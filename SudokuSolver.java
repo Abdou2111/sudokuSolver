@@ -12,8 +12,10 @@ public class SudokuSolver implements GameSolver {
     // constructor
     public SudokuSolver( GameBoard<Integer> board ){
         this.board = (IntegerBoard<Integer>) board;
-        this.solution = new IntegerBoard<Integer> ( new Integer[board.getWidth()][board.getHeight()] );
-        this.tree = new LinkedGeneralTree<>()
+        this.solution =
+            new IntegerBoard<Integer> 
+            (new Integer[board.getWidth()][board.getHeight()]);
+        this.tree = new LinkedGeneralTree<>();
     }
 
     // print the solution
@@ -49,7 +51,7 @@ public class SudokuSolver implements GameSolver {
         return true;
     }
 
-    //________________________________________________________________________________________________________
+    //________________________________________________________________________
     // mandatory GameSolver interface methods
     @Override
     public boolean solve(){
@@ -62,10 +64,9 @@ public class SudokuSolver implements GameSolver {
      * This method is using a tree to solve the sudoku puzzle.
      * The root is initialized as the sudoku given at the start,
      * and the array is traversed in width, checking which value can be added.
-     * Once the value has been found, we create a child (Node) of the root and replace 
-     * the 0 in the cell with the value found.
+     * Once the value has been found, we create a child (Node) of  
+     * the root and replace the 0 in the cell with the value found.
      */
-    @SuppressWarnings("unchecked")
     public void solveBoard(Position<IntegerBoard<Integer>> puzzle){
         //  Browse the puzzle from left to right
         for(int x = 0; x <board.getWidth(); x++) {
@@ -76,15 +77,14 @@ public class SudokuSolver implements GameSolver {
                     for(Integer value = 1; value <= board.getHeight() + 1; value++) {
                         if(isValidPlacement(x, y, value)) {
 
-                            IntegerBoard<Integer> newBoard = new IntegerBoard<>(puzzle.getElement());
+                            IntegerBoard<Integer> newBoard = puzzle.getElement();
+                            // If the value is valid, we put it in the new Board
                             newBoard.setCell(x, y, value);
-                            // If the value is valid, we create a node in the tree
-                            board.setCell(x, y, value);
+                            // Create a node in the tree
                             Position<IntegerBoard<Integer>> child =
-                                sudokuTree.addChild(root, board);
-                            LinkedGeneralTree<IntegerBoard<Integer>> childTree =
-                                (LinkedGeneralTree<IntegerBoard<Integer>>) child;
-                            solveBoard(childTree);
+                                tree.addChild(puzzle, newBoard);
+
+                            solveBoard(child);
                         }
                     }
                 }

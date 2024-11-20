@@ -23,7 +23,8 @@ public class IntegerBoard<T> implements GameBoard<T> {
     // acces board's elements
     @Override
     @SuppressWarnings("unchecked")
-    public T getCell( int x, int y ) throws IndexOutOfBoundsException{
+    public T getCell( int x, int y ) 
+    throws IndexOutOfBoundsException{
         // return an exception if at least one index is not correct
         if( x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ){
             throw new IndexOutOfBoundsException
