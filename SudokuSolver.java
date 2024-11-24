@@ -13,12 +13,17 @@ public class SudokuSolver implements GameSolver {
     public SudokuSolver( GameBoard<Integer> board ){
         this.board = (IntegerBoard<Integer>) board;
         this.solution = new IntegerBoard<Integer> ( new Integer[board.getWidth()][board.getHeight()] );
-        this.tree = new LinkedGeneralTree<>()
+        this.tree = new LinkedGeneralTree<>();
     }
 
     // print the solution
     public void printSolution(){
-        System.out.println( solution );
+        for( int x = 0; x < board.getWidth(); x++ ){
+            for( int y = 0; y < board.getHeight(); y++ ){
+                System.out.print( solution.getCell( x, y ) + " " );
+            }
+            System.out.println();
+        }
     }
 
     public boolean isValidPlacement( int row, int col, Integer value ){
@@ -53,8 +58,8 @@ public class SudokuSolver implements GameSolver {
     // mandatory GameSolver interface methods
     @Override
     public boolean solve(){
-        solveBoard(tree.addRoot(board));
-        solution.display();
+        tree.addRoot(board);
+        solveBoard(tree.root);
         return true;
     }
 
@@ -65,23 +70,24 @@ public class SudokuSolver implements GameSolver {
      * Once the value has been found, we create a child (Node) of the root and replace 
      * the 0 in the cell with the value found.
      */
-    @SuppressWarnings("unchecked")
-    public void solveBoard(Position<IntegerBoard<Integer>> puzzle){
+    //@SuppressWarnings("unchecked")
+    /*public void solveBoard(IntegerBoard<Integer> puzzle){
         //  Browse the puzzle from left to right
         for(int x = 0; x <board.getWidth(); x++) {
             for(int y = 0; y < board.getHeight(); y++) {
                 // Finding an empty square (represented by 0) 
                 if(board.getCell(x, y) == 0) {
                     // Finding the right value
-                    for(Integer value = 1; value <= board.getHeight() + 1; value++) {
+                    for(Integer value = 1; value <= board.getHeight(); value++) {
                         if(isValidPlacement(x, y, value)) {
+                            puzzle.setCell(x, y, value);
 
+                            /*
                             IntegerBoard<Integer> newBoard = new IntegerBoard<>(puzzle.getElement());
                             newBoard.setCell(x, y, value);
                             // If the value is valid, we create a node in the tree
                             board.setCell(x, y, value);
-                            Position<IntegerBoard<Integer>> child =
-                                sudokuTree.addChild(root, board);
+                            Position<IntegerBoard<Integer>> child = sudokuTree.addChild(root, board);
                             LinkedGeneralTree<IntegerBoard<Integer>> childTree =
                                 (LinkedGeneralTree<IntegerBoard<Integer>>) child;
                             solveBoard(childTree);
@@ -89,9 +95,62 @@ public class SudokuSolver implements GameSolver {
                     }
                 }
             }
+        }*/
+
+    private void solveBoard(LinkedGeneralTree.Node<IntegerBoard<Integer>> node) {
+
+        // Ici on récupère le board du node
+        board = node.getElement();
+
+        // Si le board est résolu_____________________________________________________
+        if (isSolved()) {
+            solution = board;
+            return;
+        }
+        // Si le board n'est pas résolu_____________________________________________________
+
+        // On parcourt le board de gauche à droite_____________________________________________________
+        // Traverser les lignes
+        for (int x = 0; x < board.getWidth(); x++) {
+            // Traverser les colonnes
+            for (int y = 0; y < board.getHeight(); y++) {
+                // Si la case est vide
+                if (board.getCell(x, y) == 0) {
+                    // Trouver la bonne valeur
+                    for (int value = 1; value <= board.getHeight(); value++) {
+                        if (isValidPlacement(x, y, value) && node.getChildren().isEmpty()) {
+                            // On crée un nouveau board
+                            IntegerBoard<Integer> newBoard = new IntegerBoard<>(board.getBoard());
+                            newBoard.setCell(x, y, value);
+                            // On remplace le 0 par la valeur trouvée
+
+                            // On ajoute le noeud à l'arbre
+                            LinkedGeneralTree.Node<IntegerBoard<Integer>> child = (LinkedGeneralTree.Node<IntegerBoard<Integer>>) tree.addChild(node, newBoard);
+                            solveBoard(child);
+
+                        }
+                    }
+                    // Cas ou toutes les valeur possible sont testées mais aucune ne fonctionne
+                    //TODO: A revoir
+                    tree.removeLeaf(node);
+                    solveBoard(node.getParent());
+
+                }
+            }
         }
     }
-  
+
+    private boolean isSolved(){
+        for( int x = 0; x < board.getWidth(); x++ ){
+            for( int y = 0; y < board.getHeight(); y++ ){
+                if( board.getCell( x, y ) == 0 ){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     // actual solver
     /*private boolean solveBoard(){
@@ -115,5 +174,4 @@ public class SudokuSolver implements GameSolver {
         return true;
     }*/
 
-    
 }

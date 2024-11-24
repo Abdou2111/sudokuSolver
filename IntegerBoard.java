@@ -13,12 +13,13 @@ public class IntegerBoard<T> implements GameBoard<T> {
         this.WIDTH = puzzle[0].length;
         // create bord 
         board = new Integer[HEIGHT][WIDTH];
-        for( int x = 0; x < WIDTH; x++ ){
-            for( int y = 0; y < HEIGHT; y++ ){
-                board[x][y] = puzzle[y][x];
+        for( int y = 0; y < HEIGHT; y++ ){
+            for( int x = 0; x < WIDTH ; x++ ){
+                board[y][x] = puzzle[y][x];
             }
         }
     }
+
 
     // acces board's elements
     @Override
@@ -64,7 +65,7 @@ public class IntegerBoard<T> implements GameBoard<T> {
         verifySize();
         for( int y = 0; y < HEIGHT; y++ ){
             for( int x = 0; x < WIDTH; x++ ){
-                System.out.print( board[x][y] + " " );
+                System.out.print( board[y][x] + " " );
             }
             System.out.println();
         }
@@ -88,5 +89,8 @@ public class IntegerBoard<T> implements GameBoard<T> {
         int racine = (int) Math.sqrt(n);
         return racine * racine == n;
     }
-    
+
+    public Integer[][] getBoard() {
+        return board;
+    }
 }

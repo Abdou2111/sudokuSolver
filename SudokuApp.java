@@ -118,9 +118,11 @@ public class SudokuApp {
             {0, 6, 0, 0, 0, 0, 2, 8, 0},
             {0, 0, 0, 4, 1, 9, 0, 0, 5},
             {0, 0, 0, 0, 8, 0, 0, 7, 9}
-        } );
+        });
         puzzle.display();
         SudokuSolver solver = new SudokuSolver( puzzle );
-        System.out.println(solver.isValidPlacement(0, 8, 2));
+        System.out.println("Solving...");
+        solver.solve();
+        solver.printSolution();
     }
 }

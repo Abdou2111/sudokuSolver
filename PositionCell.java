@@ -36,6 +36,6 @@ public class PositionCell<E> implements Position<E> {
     }
 
     public Position<E> getParent(Position<E> p) {
-        return ;
+        return null;
     }
 }

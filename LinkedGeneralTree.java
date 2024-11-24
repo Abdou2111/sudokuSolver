@@ -30,7 +30,14 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         public void setParent(Node<E> parent) { this.parent = parent; }
         public void setContainer(Object container) { this.container = container; }
         public String toString() { return this.element.toString(); }
-    
+
+        public Node<E> getLastChild(Node<E> node) {
+            if (node.getChildren().size() == 0) {
+                return null;
+            } else {
+                return node.getChildren().get(node.getChildren().size() - 1);
+            }
+        }
     } // ----------- end of inner class Node
 
     protected Node<E> createNode( E element, Node<E> parent) {
@@ -46,7 +53,7 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         if(!(p instanceof Node)) 
             throw new IllegalArgumentException("Invalid position type");
         Node<E> node = (Node<E>)p;
-        if(node.getContainer() != (Object)this) 
+        if(node.getContainer() != (Object)this)
             throw new IllegalArgumentException("Invalid position container");
         if(node.getParent() == node)
             throw new IllegalArgumentException("Position has been deleted");
@@ -99,20 +106,14 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         return root;
     }
 
-    public E remove(Position<E> p) throws IllegalArgumentException {
+    public E removeLeaf(Position<E> p) throws IllegalArgumentException {
         Node<E> node = validate(p);
-        if (node.getParent() != null) {
-            node.getParent().getChildren().remove(node);
-        } else {
-            root = null; // Removing the root
+        if(numChildren(p) > 0) throw new IllegalArgumentException("Position is not a leaf");
+        Node<E> parent = node.getParent();
+        if(parent != null) {
+            parent.getChildren().remove(node);
         }
-        int subtreeSize = calculateSubtreeSize(node);
-        size -= subtreeSize;
-
-        // Invalidate the node
-        node.setParent(node);
-        node.setContainer(null);
-
+        size--;
         return node.getElement();
     }
 
@@ -124,6 +125,8 @@ public class LinkedGeneralTree<E> extends AbstractTree<E> {
         }
         return count;
     }
+
+
 
 
 // ---------------------------------------------------------------------------
