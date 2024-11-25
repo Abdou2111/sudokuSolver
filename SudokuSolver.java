@@ -54,13 +54,13 @@ public class SudokuSolver implements GameSolver {
         return true;
     }
 
+
     //________________________________________________________________________________________________________
     // mandatory GameSolver interface methods
     @Override
     public boolean solve(){
         tree.addRoot(board);
-        solveBoard(tree.root);
-        return true;
+        return solveBoard(tree.root);
     }
 
     /**
@@ -97,18 +97,10 @@ public class SudokuSolver implements GameSolver {
             }
         }*/
 
-    private void solveBoard(LinkedGeneralTree.Node<IntegerBoard<Integer>> node) {
+    private boolean solveBoard(LinkedGeneralTree.Node<IntegerBoard<Integer>> node) {
 
         // Ici on récupère le board du node
         board = node.getElement();
-
-        // Si le board est résolu_____________________________________________________
-        if (isSolved()) {
-            solution = board;
-            return;
-        }
-        // Si le board n'est pas résolu_____________________________________________________
-
         // On parcourt le board de gauche à droite_____________________________________________________
         // Traverser les lignes
         for (int x = 0; x < board.getWidth(); x++) {
@@ -118,26 +110,25 @@ public class SudokuSolver implements GameSolver {
                 if (board.getCell(x, y) == 0) {
                     // Trouver la bonne valeur
                     for (int value = 1; value <= board.getHeight(); value++) {
-                        if (isValidPlacement(x, y, value) && node.getChildren().isEmpty()) {
+                        if (isValidPlacement(x, y, value)) {
                             // On crée un nouveau board
                             IntegerBoard<Integer> newBoard = new IntegerBoard<>(board.getBoard());
                             newBoard.setCell(x, y, value);
-                            // On remplace le 0 par la valeur trouvée
-
                             // On ajoute le noeud à l'arbre
                             LinkedGeneralTree.Node<IntegerBoard<Integer>> child = (LinkedGeneralTree.Node<IntegerBoard<Integer>>) tree.addChild(node, newBoard);
-                            solveBoard(child);
-
+                            if(solveBoard(child)){
+                                return true;
+                            }
+                            else {
+                                tree.removeLeaf(node);
+                            }
                         }
                     }
-                    // Cas ou toutes les valeur possible sont testées mais aucune ne fonctionne
-                    //TODO: A revoir
-                    tree.removeLeaf(node);
-                    solveBoard(node.getParent());
-
                 }
             }
         }
+        solution = board;
+        return true;
     }
 
     private boolean isSolved(){
@@ -150,28 +141,5 @@ public class SudokuSolver implements GameSolver {
         }
         return true;
     }
-
-
-    // actual solver
-    /*private boolean solveBoard(){
-        for( int x = 0; x < board.getWidth(); x++ ){
-            for( int y = 0; y < board.getHeight(); y++ ){
-                if( board.getCell( x, y ) == 0 ){
-                    for( int value = 1; value <= 9; value++ ){
-                        if( isValidPlacement( x, y, value ) ){
-                            board.setCell( x, y, value );
-                            if( solveBoard() ){
-                                return true;
-                            }
-                            board.setCell( x, y, 0 );
-                        }
-                    }
-                    return false;
-                }
-            }
-        }
-        solution = board;
-        return true;
-    }*/
-
 }
+

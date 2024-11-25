@@ -11,7 +11,7 @@
 
 public class SudokuApp {
 
-    /*public void testCase1() {
+    public void testCase1() {
 	System.out.println( "*** Test Case 1 ***" );
         Integer[][] puzzle = {
             {5, 3, 0, 0, 7, 0, 0, 0, 0},
@@ -99,30 +99,30 @@ public class SudokuApp {
         GameSolver solver = new SudokuSolver( board );
 	solver.solve();
 	solver.printSolution();
-    }*/
+    }
 
     public static void main( String[] args ) {
-        /*SudokuApp test = new SudokuApp();
+        SudokuApp test = new SudokuApp();
         test.testCase1();
         test.testCase2();
         test.testCase3();
         test.testCase4();
-	    test.testCase5();*/
-        GameBoard<Integer> puzzle = new IntegerBoard<Integer>( new Integer[][] {
-            {5, 3, 0, 0, 7, 0, 0, 0, 0},
-            {6, 0, 0, 1, 9, 5, 0, 0, 0},
-            {0, 9, 8, 0, 0, 0, 0, 6, 0},
-            {8, 0, 0, 0, 6, 0, 0, 0, 3},
-            {4, 0, 0, 8, 0, 3, 0, 0, 1},
-            {7, 0, 0, 0, 2, 0, 0, 0, 6},
-            {0, 6, 0, 0, 0, 0, 2, 8, 0},
-            {0, 0, 0, 4, 1, 9, 0, 0, 5},
-            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+	    test.testCase5();
+        /*GameBoard<Integer> puzzle = new IntegerBoard<Integer>( new Integer[][] {
+                {5, 3, 0, 0, 7, 0, 0, 0, 0},
+                {6, 0, 0, 1, 9, 5, 0, 0, 0},
+                {0, 9, 8, 0, 0, 0, 0, 6, 0},
+                {8, 0, 0, 0, 6, 0, 0, 0, 3},
+                {4, 0, 0, 8, 0, 3, 0, 0, 1},
+                {7, 0, 0, 0, 2, 0, 0, 0, 6},
+                {0, 6, 0, 0, 0, 0, 2, 8, 0},
+                {0, 0, 0, 4, 1, 9, 0, 0, 5},
+                {0, 0, 0, 0, 8, 0, 0, 7, 9}
         });
         puzzle.display();
         SudokuSolver solver = new SudokuSolver( puzzle );
         System.out.println("Solving...");
         solver.solve();
-        solver.printSolution();
+        solver.printSolution();*/
     }
 }
